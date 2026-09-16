@@ -24,11 +24,11 @@ export const ProjectProvider = ({
   projects: Project[];
   createProject: (formData: FormData, userId: string) => Promise<void>;
 }) => {
+  const { user } = useUser();
+
   const [selectedProjectId, setSelectedProjectId] = useState<string>(
     projects[0]?.id || "",
   );
-
-  const { user } = useUser();
 
   const createProjectCtx = (formData: FormData) =>
     createProject(formData, user.id);
