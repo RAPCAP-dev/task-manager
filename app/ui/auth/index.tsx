@@ -1,4 +1,4 @@
-import { signIn } from "../../auth";
+import { signIn } from "@/app/services";
 
 export const Auth = () => {
   return (

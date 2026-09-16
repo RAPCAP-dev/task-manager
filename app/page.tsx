@@ -5,12 +5,12 @@ import {
   toggleTaskStatusAction,
   updateTaskPriorityAction,
 } from "./services";
-import { auth } from "./auth";
+import { makeAuth } from "./services/auth";
 
 export default async function Home() {
-  const session = await auth();
+  const user = await makeAuth();
 
-  if (!session) {
+  if (!user) {
     return <Auth />;
   }
 
@@ -28,7 +28,7 @@ export default async function Home() {
   return (
     <main className="min-h-screen bg-slate-900 text-slate-100 p-8">
       <div className="max-w-xl mx-auto space-y-8">
-        <Header session={session} />
+        <Header user={user} />
         <Form project={project} createTaskAction={createTaskAction} />
         <List
           tasks={project?.tasks || []}

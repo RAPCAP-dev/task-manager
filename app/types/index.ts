@@ -3,5 +3,6 @@ export type {
   Task,
   TaskStatus,
   Priority,
-  Project
-} from "../../prisma/generated";
+  Project,
+  Session,
+} from "@/prisma/generated";
