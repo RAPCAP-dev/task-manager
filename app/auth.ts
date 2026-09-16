@@ -3,7 +3,7 @@ import "dotenv/config";
 import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 
-import { db } from "@/app/lib/db";
+import { db } from "@/app/db";
 import { Role } from "@/prisma/generated";
 
 export const makeAuth = async () => {

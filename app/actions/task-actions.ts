@@ -1,6 +1,6 @@
 "use server";
 
-import { db } from "../lib/db";
+import { db } from "../db";
 import { revalidatePath } from "next/cache";
 import { Priority, TaskStatus } from "../types"; 
 

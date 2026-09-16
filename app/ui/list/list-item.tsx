@@ -5,15 +5,12 @@ import { Priority, Task } from "@/app/types";
 
 export const ListItem = ({
   task,
-  toggleTaskStatusAction,
-  updateTaskPriorityAction,
+  toggleTask,
+  updateTaskPriority,
 }: {
   task: Task;
-  toggleTaskStatusAction: (taskId: string) => Promise<void>;
-  updateTaskPriorityAction: (
-    taskId: string,
-    newPriority: Priority,
-  ) => Promise<void>;
+  toggleTask: (taskId: string) => Promise<void>;
+  updateTaskPriority: (taskId: string, newPriority: Priority) => Promise<void>;
 }) => (
   <div
     key={task.id}
@@ -28,7 +25,7 @@ export const ListItem = ({
         }`}
         onClick={() => {
           startTransition(async () => {
-            await toggleTaskStatusAction(task.id);
+            await toggleTask(task.id);
           });
         }}
       >
@@ -59,7 +56,7 @@ export const ListItem = ({
           <button
             onClick={() => {
               startTransition(async () => {
-                await updateTaskPriorityAction(task.id, "HIGH");
+                await updateTaskPriority(task.id, "HIGH");
               });
             }}
             disabled={task.priority === "HIGH"}
@@ -75,7 +72,7 @@ export const ListItem = ({
           <button
             onClick={() => {
               startTransition(async () => {
-                await updateTaskPriorityAction(task.id, "MEDIUM");
+                await updateTaskPriority(task.id, "MEDIUM");
               });
             }}
             disabled={task.priority === "MEDIUM"}
@@ -91,7 +88,7 @@ export const ListItem = ({
           <button
             onClick={() => {
               startTransition(async () => {
-                await updateTaskPriorityAction(task.id, "LOW");
+                await updateTaskPriority(task.id, "LOW");
               });
             }}
             disabled={task.priority === "LOW"}

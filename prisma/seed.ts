@@ -1,4 +1,4 @@
-import { db as prisma } from "@/app/lib/db"
+import { db as prisma } from "@/app/db"
 
 const main = async () => {
   // await prisma.task.deleteMany()

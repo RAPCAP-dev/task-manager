@@ -25,7 +25,7 @@ export const Form = ({}) => {
   const { projects, createProject, selectedProjectId, setSelectedProjectId } =
     useProjects();
 
-  const { tasks, createTask, toggleTask, updateTaskPriority } = useTask();
+  const { createTask } = useTask();
 
   const [priority, setPriority] = useState<Priority>("MEDIUM");
 
@@ -41,7 +41,6 @@ export const Form = ({}) => {
   return (
     <>
       <div className="space-y-6">
-        {/* СЕКЦИЯ 1: Управление проектами (Выбор или Создание нового) */}
         <div className="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-xl space-y-4">
           <div className="flex justify-between items-center">
             <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider">
@@ -57,7 +56,6 @@ export const Form = ({}) => {
           </div>
 
           {isCreatingProject ? (
-            /* Форма создания проекта */
             <form
               action={handleCreateProject}
               className="flex gap-2 items-center"
@@ -77,7 +75,6 @@ export const Form = ({}) => {
               </button>
             </form>
           ) : (
-            /* Селект выбора существующего проекта */
             <div className="w-full">
               {projects.length > 0 ? (
                 <select
@@ -100,7 +97,6 @@ export const Form = ({}) => {
           )}
         </div>
 
-        {/* СЕКЦИЯ 2: Форма добавления задачи */}
         {projects.length > 0 && !isCreatingProject ? (
           <div className="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-xl space-y-4">
             <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider">
@@ -121,7 +117,6 @@ export const Form = ({}) => {
               />
               <input type="hidden" name="taskPriority" value={priority} />
 
-              {/* Выбор приоритета */}
               <div className="relative group z-30">
                 <button
                   type="button"
@@ -182,11 +177,7 @@ export const Form = ({}) => {
         ) : null}
       </div>
 
-      <List
-        tasks={tasks}
-        toggleTaskStatusAction={toggleTask}
-        updateTaskPriorityAction={updateTaskPriority}
-      />
+      <List />
     </>
   );
 };

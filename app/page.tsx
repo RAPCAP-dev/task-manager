@@ -1,6 +1,6 @@
-import { db } from "./lib/db";
+import { db } from "./db";
 import { Form, Auth, Header } from "./ui";
-import { makeAuth } from "./services/auth";
+import { makeAuth } from "./auth";
 
 import { UserProvider } from "./context/user";
 import { ProjectProvider } from "./context/project";
