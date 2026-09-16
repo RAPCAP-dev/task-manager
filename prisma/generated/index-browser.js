@@ -128,6 +128,14 @@ exports.Prisma.ProjectScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.ProjectMemberScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  projectId: 'projectId',
+  role: 'role',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.TaskScalarFieldEnum = {
   id: 'id',
   title: 'title',
@@ -137,7 +145,9 @@ exports.Prisma.TaskScalarFieldEnum = {
   dueDate: 'dueDate',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  projectId: 'projectId'
+  projectId: 'projectId',
+  creatorId: 'creatorId',
+  assigneeId: 'assigneeId'
 };
 
 exports.Prisma.UserScalarFieldEnum = {
@@ -185,6 +195,11 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
+exports.ProjectRole = exports.$Enums.ProjectRole = {
+  OWNER: 'OWNER',
+  MEMBER: 'MEMBER'
+};
+
 exports.TaskStatus = exports.$Enums.TaskStatus = {
   TODO: 'TODO',
   IN_PROGRESS: 'IN_PROGRESS',
@@ -204,6 +219,7 @@ exports.Role = exports.$Enums.Role = {
 
 exports.Prisma.ModelName = {
   Project: 'Project',
+  ProjectMember: 'ProjectMember',
   Task: 'Task',
   User: 'User',
   Account: 'Account',

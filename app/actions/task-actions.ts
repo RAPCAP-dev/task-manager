@@ -4,7 +4,7 @@ import { db } from "../lib/db";
 import { revalidatePath } from "next/cache";
 import { Priority, TaskStatus } from "../types"; 
 
-export async function createTaskAction(formData: FormData, projectId: string) {
+export async function createTaskAction(formData: FormData, projectId: string, userId: string) {
   const title = formData.get("taskTitle") as string;
   if (!title || !projectId) return;
 
@@ -14,6 +14,7 @@ export async function createTaskAction(formData: FormData, projectId: string) {
       projectId: projectId,
       status: "TODO",
       priority: (formData.get("taskPriority") as Priority) || "MEDIUM",
+      creatorId: userId,
     },
   });
 
@@ -45,3 +46,4 @@ export async function updateTaskPriorityAction(taskId: string, newPriority: Prio
 
   revalidatePath("/");
 }
+

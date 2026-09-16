@@ -1,4 +1,4 @@
-import { signIn } from "@/app/services";
+import { signInAction } from "@/app/actions/auth-actions";
 
 export const Auth = () => {
   return (
@@ -12,13 +12,7 @@ export const Auth = () => {
           через ваш аккаунт Google.
         </p>
 
-        {/* Форма вызывает Server Action для мгновенного редиректа в Google */}
-        <form
-          action={async () => {
-            "use server";
-            await signIn("google");
-          }}
-        >
+        <form action={signInAction}>
           <button
             type="submit"
             className="w-full bg-white hover:bg-slate-100 text-slate-900 font-bold py-3 px-4 rounded-xl transition active:scale-95 shadow-lg flex items-center justify-center gap-3"

@@ -1,11 +1,19 @@
 import { db } from "./lib/db";
-import { Header, Form, List, Auth } from "./ui";
+import { Form, Auth, Header } from "./ui";
+import { makeAuth } from "./services/auth";
+
+import { UserProvider } from "./context/user";
+import { ProjectProvider } from "./context/project";
+
+import { signOutAction } from "./actions/auth-actions";
+import { createProjectAction } from "./actions/project-actions";
+
 import {
   createTaskAction,
   toggleTaskStatusAction,
   updateTaskPriorityAction,
-} from "./services";
-import { makeAuth } from "./services/auth";
+} from "@/app/actions/task-actions";
+import { TaskProvider } from "./context/task";
 
 export default async function Home() {
   const user = await makeAuth();
@@ -21,21 +29,31 @@ export default async function Home() {
         orderBy: [{ createdAt: "desc" }, { id: "desc" }],
       },
     },
+    where: {
+      members: {
+        some: {
+          userId: user.id,
+        },
+      },
+    },
   });
 
-  const project = projects[0];
-
   return (
-    <main className="min-h-screen bg-slate-900 text-slate-100 p-8">
-      <div className="max-w-xl mx-auto space-y-8">
-        <Header user={user} />
-        <Form project={project} createTaskAction={createTaskAction} />
-        <List
-          tasks={project?.tasks || []}
-          toggleTaskStatusAction={toggleTaskStatusAction}
-          updateTaskPriorityAction={updateTaskPriorityAction}
-        />
-      </div>
-    </main>
+    <UserProvider user={user} signOut={signOutAction}>
+      <ProjectProvider projects={projects} createProject={createProjectAction}>
+        <TaskProvider
+          createTask={createTaskAction}
+          toggleTask={toggleTaskStatusAction}
+          updateTaskPriority={updateTaskPriorityAction}
+        >
+          <main className="min-h-screen bg-slate-900 text-slate-100 p-8">
+            <div className="max-w-xl mx-auto space-y-8">
+              <Header />
+              <Form />
+            </div>
+          </main>
+        </TaskProvider>
+      </ProjectProvider>
+    </UserProvider>
   );
 }
