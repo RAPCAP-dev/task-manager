@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { Project } from "../types";
+import { useUser } from "./user";
 
 export type ProjectContextType = {
   projects: Project[];
@@ -21,17 +22,22 @@ export const ProjectProvider = ({
 }: {
   children: React.ReactNode;
   projects: Project[];
-  createProject: (formData: FormData) => Promise<void>;
+  createProject: (formData: FormData, userId: string) => Promise<void>;
 }) => {
   const [selectedProjectId, setSelectedProjectId] = useState<string>(
     projects[0]?.id || "",
   );
 
+  const { user } = useUser();
+
+  const createProjectCtx = (formData: FormData) =>
+    createProject(formData, user.id);
+
   return (
     <ProjectContext.Provider
       value={{
         projects,
-        createProject,
+        createProject: createProjectCtx,
         selectedProjectId,
         setSelectedProjectId,
       }}

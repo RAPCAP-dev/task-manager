@@ -1,15 +1,12 @@
 "use client";
 
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React from "react";
 import { Priority, Task } from "../types";
 import { useProjects } from "./project";
+import { useUser } from "./user";
 
 export type TaskContextType = {
-  createTask: (
-    formData: FormData,
-    projectId: string,
-    userId: string,
-  ) => Promise<void>;
+  createTask: (formData: FormData) => Promise<void>;
   toggleTask: (taskId: string) => Promise<void>;
   updateTaskPriority: (taskId: string, newPriority: Priority) => Promise<void>;
   tasks: Task[];
@@ -32,15 +29,19 @@ export const TaskProvider = ({
   toggleTask: (taskId: string) => Promise<void>;
   updateTaskPriority: (taskId: string, newPriority: Priority) => Promise<void>;
 }) => {
+  const { user } = useUser();
   const { projects, selectedProjectId } = useProjects();
 
   const tasks =
     projects.find((proj) => proj.id === selectedProjectId)?.tasks || [];
 
+  const createTaskCtx = (formData: FormData) =>
+    createTask(formData, selectedProjectId, user.id);
+
   return (
     <TaskContext.Provider
       value={{
-        createTask,
+        createTask: createTaskCtx,
         toggleTask,
         updateTaskPriority,
         tasks,

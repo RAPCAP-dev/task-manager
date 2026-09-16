@@ -46,12 +46,8 @@ export default async function Home() {
           toggleTask={toggleTaskStatusAction}
           updateTaskPriority={updateTaskPriorityAction}
         >
-          <main className="min-h-screen bg-slate-900 text-slate-100 p-8">
-            <div className="max-w-xl mx-auto space-y-8">
-              <Header />
-              <Form />
-            </div>
-          </main>
+          <Header />
+          <Form />
         </TaskProvider>
       </ProjectProvider>
     </UserProvider>

@@ -3,25 +3,10 @@
 import { Priority } from "@/app/types";
 import { useState } from "react";
 import { List } from "../list";
-import { useUser } from "@/app/context/user";
 import { useProjects } from "@/app/context/project";
 import { useTask } from "@/app/context/task";
 
-const getPriorityStyles = (p: Priority) => {
-  switch (p) {
-    case "HIGH":
-      return "bg-rose-500/10 text-rose-400 border border-rose-500/20";
-    case "MEDIUM":
-      return "bg-blue-500/10 text-blue-400 border border-blue-500/20";
-    case "LOW":
-      return "bg-slate-700/50 text-slate-400 border border-slate-700";
-  }
-};
-
 export const Form = ({}) => {
-  const { user } = useUser();
-  const userId = user?.id || "";
-
   const { projects, createProject, selectedProjectId, setSelectedProjectId } =
     useProjects();
 
@@ -32,8 +17,6 @@ export const Form = ({}) => {
   const [isCreatingProject, setIsCreatingProject] = useState(false);
 
   const handleCreateProject = async (formData: FormData) => {
-    formData.append("userId", userId);
-
     await createProject(formData);
     setIsCreatingProject(false);
   };
@@ -77,17 +60,41 @@ export const Form = ({}) => {
           ) : (
             <div className="w-full">
               {projects.length > 0 ? (
-                <select
-                  value={selectedProjectId}
-                  onChange={(e) => setSelectedProjectId(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2 text-slate-200 focus:outline-none focus:border-blue-500 transition cursor-pointer"
-                >
-                  {projects.map((proj) => (
-                    <option key={proj.id} value={proj.id}>
-                      {proj.title}
-                    </option>
-                  ))}
-                </select>
+                <div className="relative w-full group">
+                  <select
+                    value={selectedProjectId}
+                    onChange={(e) => setSelectedProjectId(e.target.value)}
+                    /* Добавили appearance-none (скрыть старую стрелку) и pr-10 (отступ справа) */
+                    className="w-full appearance-none bg-slate-950 border border-slate-700 rounded-lg px-4 pr-10 py-2 text-slate-200 focus:outline-none focus:border-blue-500 transition cursor-pointer"
+                  >
+                    {projects.map((proj) => (
+                      <option
+                        key={proj.id}
+                        value={proj.id}
+                        className="bg-slate-950 text-slate-200"
+                      >
+                        {proj.title}
+                      </option>
+                    ))}
+                  </select>
+
+                  {/* Кастомная SVG стрелочка, спозиционированная идеально ровно */}
+                  <div className="pointer-events-none absolute inset-y-0 right-4 flex items-center text-slate-400 group-focus-within:text-blue-500 transition-colors">
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </div>
+                </div>
               ) : (
                 <p className="text-amber-400 bg-amber-950/30 border border-amber-900 p-3 rounded-lg text-sm">
                   ⚠ Нет доступных проектов. Создайте первый проект.
@@ -103,9 +110,7 @@ export const Form = ({}) => {
               Быстрое добавление задачи
             </h2>
             <form
-              action={(formData) =>
-                createTask(formData, selectedProjectId, userId)
-              }
+              action={(formData) => createTask(formData)}
               className="flex gap-2 items-center"
             >
               <input
@@ -180,4 +185,15 @@ export const Form = ({}) => {
       <List />
     </>
   );
+};
+
+const getPriorityStyles = (p: Priority) => {
+  switch (p) {
+    case "HIGH":
+      return "bg-rose-500/10 text-rose-400 border border-rose-500/20";
+    case "MEDIUM":
+      return "bg-blue-500/10 text-blue-400 border border-blue-500/20";
+    case "LOW":
+      return "bg-slate-700/50 text-slate-400 border border-slate-700";
+  }
 };
