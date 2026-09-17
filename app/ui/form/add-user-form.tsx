@@ -1,9 +1,9 @@
-import { useError } from "@/app/context/error";
+import { useNotification } from "@/app/context/notification";
 import { useProjects } from "@/app/context/project";
 
 export const AddUserForm = ({ onClose }: { onClose: () => void }) => {
   const { addUserToProject } = useProjects();
-  const { ifErrorCode } = useError();
+  const { ifErrorCode } = useNotification();
 
   const handleSubmit = async (formData: FormData) => {
     const email = formData.get("email") as string;

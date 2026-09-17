@@ -20,8 +20,8 @@ import {
   updateTaskPriorityAction,
 } from "@/app/actions/task-actions";
 import { TaskProvider } from "./context/task";
-import { ErrorList } from "@/app/ui/error-list";
-import { ErrorProvider } from "./context/error";
+import { NotificationList } from "@/app/ui/notification";
+import { NotificationProvider } from "./context/notification";
 
 export default async function Home() {
   const user = await makeAuth();
@@ -61,11 +61,11 @@ export default async function Home() {
           updateTaskStatus={updateTaskStatusAction}
           updateTaskPriority={updateTaskPriorityAction}
         >
-          <ErrorProvider>
-            <ErrorList />
+          <NotificationProvider>
+            <NotificationList />
             <Header />
             <Form />
-          </ErrorProvider>
+          </NotificationProvider>
         </TaskProvider>
       </ProjectProvider>
     </UserProvider>
