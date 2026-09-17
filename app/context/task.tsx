@@ -6,7 +6,7 @@ import { useProjects } from "./project";
 import { useUser } from "./user";
 
 export type TaskContextType = {
-  createTask: (formData: FormData) => Promise<void>;
+  createTask: (title: string, priority: Priority) => Promise<void>;
   updateTaskStatus: (taskId: string, status: TaskStatus) => Promise<void>;
   updateTaskPriority: (taskId: string, newPriority: Priority) => Promise<void>;
   tasks: Task[];
@@ -22,7 +22,8 @@ export const TaskProvider = ({
 }: {
   children: React.ReactNode;
   createTask: (
-    formData: FormData,
+    title: string,
+    priority: Priority,
     projectId: string,
     userId: string,
   ) => Promise<void>;
@@ -35,8 +36,8 @@ export const TaskProvider = ({
   const tasks =
     projects.find((proj) => proj.id === selectedProjectId)?.tasks || [];
 
-  const createTaskCtx = (formData: FormData) =>
-    createTask(formData, selectedProjectId, user.id);
+  const createTaskCtx = (title: string, priority: Priority) =>
+    createTask(title, priority, selectedProjectId, user.id);
 
   return (
     <TaskContext.Provider

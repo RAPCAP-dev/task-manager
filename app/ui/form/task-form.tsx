@@ -6,15 +6,18 @@ export const TaskForm = ({}) => {
   const [priority, setPriority] = useState<Priority>("MEDIUM");
   const { createTask } = useTask();
 
+  const submit = (formData: FormData) => {
+    const title = formData.get("taskTitle") as string;
+    const priority = (formData.get("taskPriority") as Priority) || "MEDIUM";
+    createTask(title, priority);
+  };
+
   return (
     <div className="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-xl space-y-4">
       <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider">
         Быстрое добавление задачи
       </h2>
-      <form
-        action={(formData) => createTask(formData)}
-        className="flex gap-2 items-center"
-      >
+      <form action={submit} className="flex gap-2 items-center">
         <input
           type="text"
           name="taskTitle"

@@ -4,8 +4,7 @@ import { db } from "../db";
 import { revalidatePath } from "next/cache";
 import { Priority, TaskStatus } from "../types"; 
 
-export async function createTaskAction(formData: FormData, projectId: string, userId: string) {
-  const title = formData.get("taskTitle") as string;
+export async function createTaskAction(title: string, priority: Priority, projectId: string, userId: string) {
   if (!title || !projectId) return;
 
   await db.task.create({
@@ -13,7 +12,7 @@ export async function createTaskAction(formData: FormData, projectId: string, us
       title: title,
       projectId: projectId,
       status: "TODO",
-      priority: (formData.get("taskPriority") as Priority) || "MEDIUM",
+      priority: priority,
       creatorId: userId,
     },
   });
@@ -31,9 +30,6 @@ export async function updateTaskStatusAction(taskId: string, newStatus: TaskStat
 }
 
 export async function updateTaskPriorityAction(taskId: string, newPriority: Priority) {
-  const task = await db.task.findUnique({ where: { id: taskId } });
-  if (!task) return;
-
   await db.task.update({
     where: { id: taskId },
     data: { priority: newPriority },
