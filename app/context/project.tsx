@@ -6,9 +6,10 @@ import { useUser } from "./user";
 
 export type ProjectContextType = {
   projects: Project[];
-  createProject: (formData: FormData) => Promise<void>;
   selectedProjectId: string;
   setSelectedProjectId: React.Dispatch<React.SetStateAction<string>>;
+  createProject: (formData: FormData) => Promise<void>;
+  addUserToProject: (formData: FormData) => Promise<void | string>;
 };
 
 export const ProjectContext = React.createContext<ProjectContextType | null>(
@@ -19,10 +20,15 @@ export const ProjectProvider = ({
   children,
   projects,
   createProject,
+  addUserToProject,
 }: {
   children: React.ReactNode;
   projects: Project[];
   createProject: (formData: FormData, userId: string) => Promise<void>;
+  addUserToProject: (
+    formData: FormData,
+    projectId: string,
+  ) => Promise<void | string>;
 }) => {
   const { user } = useUser();
 
@@ -33,13 +39,17 @@ export const ProjectProvider = ({
   const createProjectCtx = (formData: FormData) =>
     createProject(formData, user.id);
 
+  const addUserToProjectCtx = (formData: FormData) =>
+    addUserToProject(formData, selectedProjectId);
+
   return (
     <ProjectContext.Provider
       value={{
         projects,
-        createProject: createProjectCtx,
         selectedProjectId,
         setSelectedProjectId,
+        createProject: createProjectCtx,
+        addUserToProject: addUserToProjectCtx,
       }}
     >
       {children}

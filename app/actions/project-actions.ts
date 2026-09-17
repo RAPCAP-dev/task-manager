@@ -1,5 +1,6 @@
 "use server";
 
+import { ErrorCode } from "../consts";
 import { db } from "../db";
 import { revalidatePath } from "next/cache";
 
@@ -28,5 +29,37 @@ export async function createProjectAction(formData: FormData, userId: string) {
     revalidatePath("/");
   } catch (error) {
     console.error("❌ Ошибка при создании проекта:", error);
+  }
+}
+
+export async function addUserToProjectAction(formData: FormData, projectId: string): Promise<void | string> {
+  const email = formData.get("email") as string
+  console.log({ email })
+  
+  if (!email) {
+    return ErrorCode.INVALID_EMAIL
+  }
+  
+ try {
+    const user = await db.user.findUnique({
+      where: { email },
+    });
+
+    if (!user) {
+      console.error("❌ Пользователь с таким email не найден");
+      return ErrorCode.USER_NOT_FOUND
+    }
+
+   await db.projectMember.create({
+      data: {
+        userId: user.id,
+        projectId: projectId,
+        role: 'MEMBER',
+      },
+    });
+
+    revalidatePath("/");
+  } catch (error) {
+    console.error("❌ Ошибка при добавлении пользователя в проект:", error);
   }
 }

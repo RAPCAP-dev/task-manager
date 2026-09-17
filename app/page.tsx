@@ -6,7 +6,10 @@ import { UserProvider } from "./context/user";
 import { ProjectProvider } from "./context/project";
 
 import { signOutAction } from "./actions/auth-actions";
-import { createProjectAction } from "./actions/project-actions";
+import {
+  createProjectAction,
+  addUserToProjectAction,
+} from "./actions/project-actions";
 
 import {
   createTaskAction,
@@ -14,6 +17,8 @@ import {
   updateTaskPriorityAction,
 } from "@/app/actions/task-actions";
 import { TaskProvider } from "./context/task";
+import { ErrorList } from "./ui/error";
+import { ErrorProvider } from "./context/error";
 
 export default async function Home() {
   const user = await makeAuth();
@@ -40,14 +45,21 @@ export default async function Home() {
 
   return (
     <UserProvider user={user} signOut={signOutAction}>
-      <ProjectProvider projects={projects} createProject={createProjectAction}>
+      <ProjectProvider
+        projects={projects}
+        addUserToProject={addUserToProjectAction}
+        createProject={createProjectAction}
+      >
         <TaskProvider
           createTask={createTaskAction}
           toggleTask={toggleTaskStatusAction}
           updateTaskPriority={updateTaskPriorityAction}
         >
-          <Header />
-          <Form />
+          <ErrorProvider>
+            <ErrorList />
+            <Header />
+            <Form />
+          </ErrorProvider>
         </TaskProvider>
       </ProjectProvider>
     </UserProvider>

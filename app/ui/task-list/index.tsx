@@ -1,7 +1,7 @@
 import { ListItem } from "./list-item";
 import { useTask } from "@/app/context/task";
 
-export const List = () => {
+export const TaskList = () => {
   const { tasks, toggleTask, updateTaskPriority } = useTask();
 
   return (
