@@ -1,15 +1,15 @@
 "use client";
 
 import { startTransition } from "react";
-import { Priority, Task } from "@/app/types";
+import { Priority, Task, TaskStatus } from "@/app/types";
 
 export const ListItem = ({
   task,
-  toggleTask,
+  updateTaskStatus,
   updateTaskPriority,
 }: {
   task: Task;
-  toggleTask: (taskId: string) => Promise<void>;
+  updateTaskStatus: (taskId: string, status: TaskStatus) => Promise<void>;
   updateTaskPriority: (taskId: string, newPriority: Priority) => Promise<void>;
 }) => (
   <div
@@ -25,7 +25,10 @@ export const ListItem = ({
         }`}
         onClick={() => {
           startTransition(async () => {
-            await toggleTask(task.id);
+            const newStatus: TaskStatus =
+              task.status === "DONE" ? "TODO" : "DONE";
+
+            await updateTaskStatus(task.id, newStatus);
           });
         }}
       >

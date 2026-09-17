@@ -26,6 +26,7 @@ enum Role {
 
 enum ProjectRole {
   OWNER
+  ADMIN
   MEMBER
 }
 

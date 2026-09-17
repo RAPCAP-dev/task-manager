@@ -197,6 +197,7 @@ exports.Prisma.NullsOrder = {
 };
 exports.ProjectRole = exports.$Enums.ProjectRole = {
   OWNER: 'OWNER',
+  ADMIN: 'ADMIN',
   MEMBER: 'MEMBER'
 };
 

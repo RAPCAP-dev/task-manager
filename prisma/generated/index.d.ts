@@ -76,6 +76,7 @@ export type Role = (typeof Role)[keyof typeof Role]
 
 export const ProjectRole: {
   OWNER: 'OWNER',
+  ADMIN: 'ADMIN',
   MEMBER: 'MEMBER'
 };
 

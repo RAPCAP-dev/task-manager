@@ -1,11 +1,16 @@
 import { useProjects } from "@/app/context/project";
-import { ProjectMemberWithUser } from "@/app/types";
+import { ProjectMemberWithUser, ProjectRole } from "@/app/types";
 import { useState, useEffect } from "react";
 
-export const RemoveUserForm = ({ onClose }: { onClose: () => void }) => {
+export const ManageProjectMembersForm = ({
+  onClose,
+}: {
+  onClose: () => void;
+}) => {
   const [memberList, setMemberList] = useState<ProjectMemberWithUser[]>([]);
   const [search, setSearch] = useState("");
-  const { getProjectMembers, removeProjectMember } = useProjects();
+  const { getProjectMembers, removeProjectMember, updateProjectMemberRole } =
+    useProjects();
 
   useEffect(() => {
     const updateAsync = async () => {
@@ -16,15 +21,18 @@ export const RemoveUserForm = ({ onClose }: { onClose: () => void }) => {
   }, [getProjectMembers, search]);
 
   const handleRemove = (userId: string) => {
-    console.log({ userId });
     removeProjectMember(userId);
+  };
+
+  const handleRoleChange = (role: ProjectRole, userId: string) => {
+    updateProjectMemberRole(role, userId);
   };
 
   return (
     <div className="w-full bg-slate-950 border border-slate-700 rounded-lg p-4 shadow-xl">
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-slate-200 font-medium text-sm">
-          Удалить пользователей из проекта
+          Управление участниками проекта
         </h3>
         <button
           onClick={onClose}
@@ -62,26 +70,51 @@ export const RemoveUserForm = ({ onClose }: { onClose: () => void }) => {
 
         <div className="w-full max-h-48 overflow-y-auto border border-slate-800 rounded-lg divide-y divide-slate-800 bg-slate-900/50">
           {memberList.length > 0 ? (
-            memberList.map(({ user }) => (
+            memberList.map((member) => (
               <div
-                key={user.id}
+                key={member.user.id}
                 className="flex justify-between items-center px-3 py-2 hover:bg-slate-900 transition"
               >
-                <div className="flex flex-col min-w-0">
+                <div className="flex flex-col min-w-0 flex-1">
                   <span className="text-sm font-medium text-slate-200 truncate">
-                    {user.name}
+                    {member.user.name}
                   </span>
                   <span className="text-xs text-slate-400 truncate">
-                    {user.email}
+                    {member.user.email}
                   </span>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => handleRemove(user.id)}
-                  className="px-2 py-1 text-xs text-rose-400 hover:bg-rose-950/40 border border-transparent hover:border-rose-900/50 rounded transition shrink-0 ml-2"
-                >
-                  Удалить
-                </button>
+
+                <div className="flex items-center gap-2 shrink-0 ml-2">
+                  {member.role === ProjectRole.OWNER ? (
+                    <span className="px-2 py-1 text-xs text-violet-400 bg-violet-950/30 border border-violet-900/50 rounded font-medium minimal-w-[85px] text-center">
+                      Владелец
+                    </span>
+                  ) : (
+                    <>
+                      <select
+                        value={member.role}
+                        onChange={(e) =>
+                          handleRoleChange(
+                            e.target.value as ProjectRole,
+                            member.user.id,
+                          )
+                        }
+                        className="bg-slate-900 border border-slate-700 text-slate-200 rounded px-2 py-1 text-xs focus:outline-none focus:border-blue-500 transition cursor-pointer custom-select"
+                      >
+                        <option value={ProjectRole.MEMBER}>Участник</option>
+                        <option value={ProjectRole.ADMIN}>Админ</option>
+                      </select>
+
+                      <button
+                        type="button"
+                        onClick={() => handleRemove(member.user.id)}
+                        className="px-2 py-1 text-xs text-rose-400 hover:bg-rose-950/40 border border-transparent hover:border-rose-900/50 rounded transition"
+                      >
+                        Удалить
+                      </button>
+                    </>
+                  )}
+                </div>
               </div>
             ))
           ) : (

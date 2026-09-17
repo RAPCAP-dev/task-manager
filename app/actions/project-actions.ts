@@ -3,6 +3,7 @@
 import { ErrorCode } from "../consts";
 import { db } from "../db";
 import { revalidatePath } from "next/cache";
+import { ProjectRole } from "../types";
 
 export async function createProjectAction(formData: FormData, userId: string) {
   const title = formData.get("title") as string;
@@ -32,9 +33,7 @@ export async function createProjectAction(formData: FormData, userId: string) {
   }
 }
 
-export async function addUserToProjectAction(formData: FormData, projectId: string): Promise<void | string> {
-  const email = formData.get("email") as string
-  
+export async function addUserToProjectAction(email: string, projectId: string): Promise<void | string> {  
   if (!email) {
     return ErrorCode.INVALID_EMAIL
   }
@@ -93,9 +92,7 @@ export async function getProjectMembersAction(projectId: string, search?: string
   }
 }
 
-export async function removeMemberFromProjectAction(userId: string, projectId: string) {
-  console.log(userId, projectId)
-  
+export async function removeMemberFromProjectAction(userId: string, projectId: string) {  
   if (!userId || !projectId) return;
 
   try {
@@ -111,5 +108,31 @@ export async function removeMemberFromProjectAction(userId: string, projectId: s
     revalidatePath("/");
   } catch (error) {
     console.error("❌ Ошибка при удалении пользователя из проекта:", error);
+  }
+}
+
+export async function updateProjectMemberRoleAction(
+  role: ProjectRole,
+  userId: string,
+  projectId: string
+) {
+  if (!userId || !projectId || !role) return;
+
+  try {
+    await db.projectMember.update({
+      where: {
+        userId_projectId: {
+          userId: userId,
+          projectId: projectId,
+        },
+      },
+      data: {
+        role: role,
+      },
+    });
+
+    revalidatePath("/");
+  } catch (error) {
+    console.error("❌ Ошибка при обновлении роли участника:", error);
   }
 }

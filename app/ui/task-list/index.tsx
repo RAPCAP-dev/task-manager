@@ -2,7 +2,7 @@ import { ListItem } from "./list-item";
 import { useTask } from "@/app/context/task";
 
 export const TaskList = () => {
-  const { tasks, toggleTask, updateTaskPriority } = useTask();
+  const { tasks, updateTaskStatus, updateTaskPriority } = useTask();
 
   return (
     <div className="space-y-4">
@@ -23,7 +23,7 @@ export const TaskList = () => {
             <ListItem
               key={task.id}
               task={task}
-              toggleTask={toggleTask}
+              updateTaskStatus={updateTaskStatus}
               updateTaskPriority={updateTaskPriority}
             />
           ))

@@ -11,11 +11,12 @@ import {
   addUserToProjectAction,
   getProjectMembersAction,
   removeMemberFromProjectAction,
+  updateProjectMemberRoleAction,
 } from "./actions/project-actions";
 
 import {
   createTaskAction,
-  toggleTaskStatusAction,
+  updateTaskStatusAction,
   updateTaskPriorityAction,
 } from "@/app/actions/task-actions";
 import { TaskProvider } from "./context/task";
@@ -53,10 +54,11 @@ export default async function Home() {
         createProject={createProjectAction}
         getProjectMembers={getProjectMembersAction}
         removeProjectMember={removeMemberFromProjectAction}
+        updateProjectMemberRole={updateProjectMemberRoleAction}
       >
         <TaskProvider
           createTask={createTaskAction}
-          toggleTask={toggleTaskStatusAction}
+          updateTaskStatus={updateTaskStatusAction}
           updateTaskPriority={updateTaskPriorityAction}
         >
           <ErrorProvider>

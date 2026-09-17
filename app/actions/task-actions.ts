@@ -21,12 +21,7 @@ export async function createTaskAction(formData: FormData, projectId: string, us
   revalidatePath("/");
 }
 
-export async function toggleTaskStatusAction(taskId: string) {
-  const task = await db.task.findUnique({ where: { id: taskId } });
-  if (!task) return;
-
-  const newStatus: TaskStatus = task.status === "DONE" ? "TODO" : "DONE";
-
+export async function updateTaskStatusAction(taskId: string, newStatus: TaskStatus) {
   await db.task.update({
     where: { id: taskId },
     data: { status: newStatus },

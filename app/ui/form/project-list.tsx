@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction, useState } from "react";
 import { Project } from "@/app/types";
 import { AddUserForm } from "./add-user-form";
-import { RemoveUserForm } from "./remove-user-form";
+import { ManageProjectMembersForm } from "./manage-project-members";
 
 export const ProjectList = ({
   projects,
@@ -97,13 +97,13 @@ export const ProjectList = ({
                     onClick={handleAddUser}
                     className="w-full text-left px-4 py-2 text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition"
                   >
-                    Добавить пользователя
+                    Добавить участника
                   </button>
                   <button
                     onClick={handleRemoveUser}
-                    className="w-full text-left px-4 py-2 text-sm text-rose-400 hover:bg-rose-950/30 hover:text-rose-300 border-t border-slate-800 transition"
+                    className="w-full text-left px-4 py-2 text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition"
                   >
-                    Удалить пользователя
+                    Управление
                   </button>
                 </div>
               )}
@@ -121,7 +121,9 @@ export const ProjectList = ({
       )}
 
       {isOpenRemoveUserForm && (
-        <RemoveUserForm onClose={() => setIsOpenRemoveUserForm(false)} />
+        <ManageProjectMembersForm
+          onClose={() => setIsOpenRemoveUserForm(false)}
+        />
       )}
     </>
   );

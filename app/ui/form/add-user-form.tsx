@@ -6,7 +6,9 @@ export const AddUserForm = ({ onClose }: { onClose: () => void }) => {
   const { ifErrorCode } = useError();
 
   const handleSubmit = async (formData: FormData) => {
-    const result = await addUserToProject(formData);
+    const email = formData.get("email") as string;
+
+    const result = await addUserToProject(email);
 
     if (ifErrorCode(result)) return;
 
