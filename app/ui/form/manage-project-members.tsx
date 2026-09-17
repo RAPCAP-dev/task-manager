@@ -21,10 +21,12 @@ export const ManageProjectMembersForm = ({
   }, [getProjectMembers, search]);
 
   const handleRemove = (userId: string) => {
+    //TODO: display error ui
     removeProjectMember(userId);
   };
 
   const handleRoleChange = (role: ProjectRole, userId: string) => {
+    //TODO: display error ui
     updateProjectMemberRole(role, userId);
   };
 

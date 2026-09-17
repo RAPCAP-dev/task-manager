@@ -11,11 +11,11 @@ export type ProjectContextType = {
   createProject: (formData: FormData) => Promise<void>;
   addUserToProject: (email: string) => Promise<void | string>;
   getProjectMembers: (search?: string) => Promise<ProjectMemberWithUser[]>;
-  removeProjectMember: (userId: string) => Promise<void>;
+  removeProjectMember: (userId: string) => Promise<void | string>;
   updateProjectMemberRole: (
     role: ProjectRole,
     targetUserId: string,
-  ) => Promise<void>;
+  ) => Promise<void | string>;
 };
 
 export const ProjectContext = React.createContext<ProjectContextType | null>(
@@ -42,12 +42,15 @@ export const ProjectProvider = ({
     projectId: string,
     search?: string | undefined,
   ) => Promise<ProjectMemberWithUser[]>;
-  removeProjectMember: (userId: string, projectId: string) => Promise<void>;
+  removeProjectMember: (
+    userId: string,
+    projectId: string,
+  ) => Promise<void | string>;
   updateProjectMemberRole: (
     role: ProjectRole,
     userId: string,
     projectId: string,
-  ) => Promise<void>;
+  ) => Promise<void | string>;
 }) => {
   const { user } = useUser();
 
