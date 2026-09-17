@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Project } from "../types";
+import { Project, ProjectMemberWithUser } from "../types";
 import { useUser } from "./user";
 
 export type ProjectContextType = {
@@ -10,6 +10,8 @@ export type ProjectContextType = {
   setSelectedProjectId: React.Dispatch<React.SetStateAction<string>>;
   createProject: (formData: FormData) => Promise<void>;
   addUserToProject: (formData: FormData) => Promise<void | string>;
+  getProjectMembers: (search?: string) => Promise<ProjectMemberWithUser[]>;
+  removeProjectMember: (userId: string) => Promise<void>;
 };
 
 export const ProjectContext = React.createContext<ProjectContextType | null>(
@@ -21,6 +23,8 @@ export const ProjectProvider = ({
   projects,
   createProject,
   addUserToProject,
+  getProjectMembers,
+  removeProjectMember,
 }: {
   children: React.ReactNode;
   projects: Project[];
@@ -29,6 +33,11 @@ export const ProjectProvider = ({
     formData: FormData,
     projectId: string,
   ) => Promise<void | string>;
+  getProjectMembers: (
+    projectId: string,
+    search?: string | undefined,
+  ) => Promise<ProjectMemberWithUser[]>;
+  removeProjectMember: (userId: string, projectId: string) => Promise<void>;
 }) => {
   const { user } = useUser();
 
@@ -42,6 +51,12 @@ export const ProjectProvider = ({
   const addUserToProjectCtx = (formData: FormData) =>
     addUserToProject(formData, selectedProjectId);
 
+  const getProjectMembersCtx = (search?: string) =>
+    getProjectMembers(selectedProjectId, search);
+
+  const removeProjectMemberCtx = (userId: string) =>
+    removeProjectMember(userId, selectedProjectId);
+
   return (
     <ProjectContext.Provider
       value={{
@@ -50,6 +65,8 @@ export const ProjectProvider = ({
         setSelectedProjectId,
         createProject: createProjectCtx,
         addUserToProject: addUserToProjectCtx,
+        getProjectMembers: getProjectMembersCtx,
+        removeProjectMember: removeProjectMemberCtx,
       }}
     >
       {children}

@@ -34,7 +34,6 @@ export async function createProjectAction(formData: FormData, userId: string) {
 
 export async function addUserToProjectAction(formData: FormData, projectId: string): Promise<void | string> {
   const email = formData.get("email") as string
-  console.log({ email })
   
   if (!email) {
     return ErrorCode.INVALID_EMAIL
@@ -61,5 +60,56 @@ export async function addUserToProjectAction(formData: FormData, projectId: stri
     revalidatePath("/");
   } catch (error) {
     console.error("❌ Ошибка при добавлении пользователя в проект:", error);
+  }
+}
+
+export async function getProjectMembersAction(projectId: string, search?: string | undefined) {
+  try {
+    const members = await db.projectMember.findMany({
+      where: {
+        projectId: projectId,
+        ...(search && {
+          user: {
+            OR: [
+              { name: { contains: search, mode: "insensitive" } },
+              { email: { contains: search, mode: "insensitive" } },
+            ],
+          },
+        }),
+      },
+      include: {
+        user: true
+      },
+      orderBy: {
+        createdAt: "asc",
+      },
+      take: 20,
+    });
+
+    return members;
+  } catch (error) {
+    console.error("❌ Ошибка при получении участников проекта:", error);
+    return [];
+  }
+}
+
+export async function removeMemberFromProjectAction(userId: string, projectId: string) {
+  console.log(userId, projectId)
+  
+  if (!userId || !projectId) return;
+
+  try {
+    await db.projectMember.delete({
+      where: {
+        userId_projectId: {
+          userId: userId,
+          projectId: projectId,
+        },
+      },
+    });
+
+    revalidatePath("/");
+  } catch (error) {
+    console.error("❌ Ошибка при удалении пользователя из проекта:", error);
   }
 }

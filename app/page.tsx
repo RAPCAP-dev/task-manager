@@ -9,6 +9,8 @@ import { signOutAction } from "./actions/auth-actions";
 import {
   createProjectAction,
   addUserToProjectAction,
+  getProjectMembersAction,
+  removeMemberFromProjectAction,
 } from "./actions/project-actions";
 
 import {
@@ -17,7 +19,7 @@ import {
   updateTaskPriorityAction,
 } from "@/app/actions/task-actions";
 import { TaskProvider } from "./context/task";
-import { ErrorList } from "./ui/error";
+import { ErrorList } from "@/app/ui/error-list";
 import { ErrorProvider } from "./context/error";
 
 export default async function Home() {
@@ -49,6 +51,8 @@ export default async function Home() {
         projects={projects}
         addUserToProject={addUserToProjectAction}
         createProject={createProjectAction}
+        getProjectMembers={getProjectMembersAction}
+        removeProjectMember={removeMemberFromProjectAction}
       >
         <TaskProvider
           createTask={createTaskAction}

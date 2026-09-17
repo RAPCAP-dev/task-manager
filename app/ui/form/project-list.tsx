@@ -1,6 +1,7 @@
 import { Dispatch, SetStateAction, useState } from "react";
 import { Project } from "@/app/types";
 import { AddUserForm } from "./add-user-form";
+import { RemoveUserForm } from "./remove-user-form";
 
 export const ProjectList = ({
   projects,
@@ -13,6 +14,7 @@ export const ProjectList = ({
 }) => {
   const [isOpenSettings, setIsOpenSettings] = useState(false);
   const [isOpenAddUserForm, setIsOpenAddUserForm] = useState(false);
+  const [isOpenRemoveUserForm, setIsOpenRemoveUserForm] = useState(false);
 
   const handleAddUser = () => {
     setIsOpenSettings(false);
@@ -21,6 +23,7 @@ export const ProjectList = ({
 
   const handleRemoveUser = () => {
     setIsOpenSettings(false);
+    setIsOpenRemoveUserForm(true);
   };
 
   return (
@@ -115,6 +118,10 @@ export const ProjectList = ({
 
       {isOpenAddUserForm && (
         <AddUserForm onClose={() => setIsOpenAddUserForm(false)} />
+      )}
+
+      {isOpenRemoveUserForm && (
+        <RemoveUserForm onClose={() => setIsOpenRemoveUserForm(false)} />
       )}
     </>
   );
