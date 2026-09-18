@@ -41,7 +41,7 @@ export const NotificationProvider = ({
 
       setTimeout(() => {
         removeNotification(id);
-      }, 5000);
+      }, 1000);
     },
     [removeNotification],
   );
