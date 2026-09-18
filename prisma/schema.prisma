@@ -38,7 +38,7 @@ model Project {
   updatedAt   DateTime @updatedAt
   tasks       Task[]
 
-  members     ProjectMember[] // Участники проекта
+  members     ProjectMember[]
 }
 
 model ProjectMember {

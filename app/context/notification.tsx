@@ -14,7 +14,7 @@ export interface AppNotification {
 interface NotificationContextType {
   notifications: AppNotification[];
   addNotification: (message: string, type?: NotificationType) => void;
-  addError: (message: string) => void; // Оставлен для обратной совместимости
+  addError: (message: string) => void;
   removeNotification: (id: string) => void;
   ifErrorCode: (code?: ErrorCode | string | void) => boolean;
 }
@@ -46,7 +46,6 @@ export const NotificationProvider = ({
     [removeNotification],
   );
 
-  // Обертка для сохранения старого синтаксиса addError("сообщение")
   const addError = useCallback(
     (message: string) => {
       addNotification(message, "error");

@@ -1,9 +1,8 @@
 "use client";
 
-import { useNotification } from "@/app/context/notification"; // Переименуйте контекст для ясности
+import { useNotification } from "@/app/context/notification";
 
 export const NotificationList = () => {
-  // Предполагается, что в контексте вы переименовали errors -> notifications
   const { notifications, removeNotification } = useNotification();
 
   if (!notifications || notifications.length === 0) return null;
@@ -21,7 +20,6 @@ export const NotificationList = () => {
             }`}
           >
             <div className="flex items-center gap-2 min-w-0 flex-1">
-              {/* Иконка меняется в зависимости от типа */}
               {isSuccess ? (
                 <svg
                   className="w-5 h-5 flex-shrink-0 text-emerald-100"
