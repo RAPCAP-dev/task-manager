@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Project, ProjectMemberWithUser, ProjectRole } from "../types";
 import { useUser } from "./user";
 
@@ -16,6 +16,7 @@ export type ProjectContextType = {
     role: ProjectRole,
     targetUserId: string,
   ) => Promise<void | string | true>;
+  updateProjectName: (title: string) => Promise<void | string | true>;
 };
 
 export const ProjectContext = React.createContext<ProjectContextType | null>(
@@ -30,6 +31,7 @@ export const ProjectProvider = ({
   getProjectMembers,
   removeProjectMember,
   updateProjectMemberRole,
+  updateProjectName,
 }: {
   children: React.ReactNode;
   projects: Project[];
@@ -53,6 +55,11 @@ export const ProjectProvider = ({
     role: ProjectRole,
     userId: string,
     projectId: string,
+  ) => Promise<void | string | true>;
+  updateProjectName: (
+    title: string,
+    projectId: string,
+    userId: string,
   ) => Promise<void | string | true>;
 }) => {
   const { user } = useUser();
@@ -78,6 +85,9 @@ export const ProjectProvider = ({
     targetUserId: string,
   ) => updateProjectMemberRole(role, targetUserId, selectedProjectId);
 
+  const updateProjectNameCtx = (title: string) =>
+    updateProjectName(title, selectedProjectId, user.id);
+
   return (
     <ProjectContext.Provider
       value={{
@@ -89,6 +99,7 @@ export const ProjectProvider = ({
         getProjectMembers: getProjectMembersCtx,
         removeProjectMember: removeProjectMemberCtx,
         updateProjectMemberRole: updateProjectMemberRoleCtx,
+        updateProjectName: updateProjectNameCtx,
       }}
     >
       {children}

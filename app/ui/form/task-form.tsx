@@ -5,7 +5,7 @@ import { PrioritySelector } from "../priority-selector";
 import { useNotification } from "@/app/context/notification";
 import { SUCCESS_MESSAGE } from "@/app/consts";
 
-export const TaskForm = ({}) => {
+export const TaskForm = () => {
   const [priority, setPriority] = useState<Priority>(Priority.MEDIUM);
   const { createTask } = useTask();
   const { addNotification, ifErrorCode } = useNotification();

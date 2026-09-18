@@ -1,5 +1,5 @@
 import { Priority } from "@/app/types";
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 
 export type PriorityType = (typeof Priority)[keyof typeof Priority];
 
@@ -31,7 +31,9 @@ const PRIORITIES = Object.values(Priority) as PriorityType[];
 
 interface PrioritySelectorProps {
   value: PriorityType;
-  onChange: (newPriority: Priority) => Promise<void>;
+  onChange:
+    | ((priority: Priority) => Promise<void | string | true>)
+    | Dispatch<Priority>;
   disabled?: boolean;
 }
 

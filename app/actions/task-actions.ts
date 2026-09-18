@@ -87,3 +87,24 @@ export async function updateAssignedTaskAction(
     return ErrorCode.CREATE_TASK_ERROR;
   }
 }
+export async function updateDescriptionTaskAction(
+  taskId: string,
+  description: string | null,
+) {
+  try {
+    await db.task.update({
+      where: { id: taskId },
+      data: {
+        description: description,
+      },
+    });
+
+    revalidatePath("/");
+    return true;
+  } catch (error) {
+    console.error("❌ Ошибка при обновлении задачи:", error);
+    return ErrorCode.CREATE_TASK_ERROR;
+  }
+}
+
+

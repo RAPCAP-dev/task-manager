@@ -3,8 +3,31 @@
 import { ErrorCode } from "../consts";
 import { db } from "../db";
 import { revalidatePath } from "next/cache";
-import { ProjectRole } from "../types";
+import { ProjectRole, User } from "../types";
 import { auth } from "../auth";
+
+export async function getProjects(user: User) {
+  try {
+    return await db.project.findMany({
+      orderBy: { createdAt: "desc" },
+      include: {
+        tasks: {
+          orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+        },
+      },
+      where: {
+        members: {
+          some: {
+            userId: user.id,
+          },
+        },
+      },
+    });
+  } catch (error) {
+    console.error("❌ Ошибка при загрузке проектов:", error);
+    return [];
+  }
+}
 
 type AuthCheckResult =
   | { success: true; currentUserId: string }
@@ -44,7 +67,7 @@ export async function createProjectAction(formData: FormData, userId: string) {
   const description = (formData.get("projectDescription") as string) || "";
 
   if (!title || !userId) {
-    return ErrorCode.CREATE_PROJECT_ERROR
+    return ErrorCode.CREATE_PROJECT_ERROR;
   }
 
   try {
@@ -64,17 +87,17 @@ export async function createProjectAction(formData: FormData, userId: string) {
     });
 
     revalidatePath("/");
-    return true
+    return true;
   } catch (error) {
     console.error("❌ Ошибка при создании проекта:", error);
-    return ErrorCode.CREATE_PROJECT_ERROR
+    return ErrorCode.CREATE_PROJECT_ERROR;
   }
 }
 
 export async function addUserToProjectAction(
   email: string,
   projectId: string,
-): Promise<void | string> {
+): Promise<void | string | true> {
   if (!email) {
     return ErrorCode.INVALID_EMAIL;
   }
@@ -97,7 +120,7 @@ export async function addUserToProjectAction(
       where: { userId_projectId: { userId: user.id, projectId } },
     });
     if (existingMember) {
-      return ErrorCode.USER_ALREADY_IN_PROJECT
+      return ErrorCode.USER_ALREADY_IN_PROJECT;
     }
 
     await db.projectMember.create({
@@ -109,12 +132,10 @@ export async function addUserToProjectAction(
     });
 
     revalidatePath("/");
-  } catch (dbError) {
-    console.error(
-      "❌ Критическая ошибка БД при добавлении пользователя:",
-      dbError,
-    );
-    return ErrorCode.DATABASE_ERROR
+    return true;
+  } catch (error) {
+    console.error("❌ Критическая ошибка добавлении пользователя:", error);
+    return ErrorCode.DATABASE_ERROR;
   }
 }
 
@@ -154,9 +175,9 @@ export async function getProjectMembersAction(
 export async function removeMemberFromProjectAction(
   userId: string,
   projectId: string,
-): Promise<void | string> {
+): Promise<void | string | true> {
   if (!userId || !projectId) {
-    return "INVALID_PARAMS";
+    return ErrorCode.UPDATE_PROJECT_ERROR;
   }
 
   const authResult = await verifyProjectAdmin(projectId);
@@ -180,7 +201,6 @@ export async function removeMemberFromProjectAction(
       return ErrorCode.CANNOT_REMOVE_OWNER;
     }
 
-
     await db.projectMember.delete({
       where: {
         userId_projectId: { userId, projectId },
@@ -188,6 +208,7 @@ export async function removeMemberFromProjectAction(
     });
 
     revalidatePath("/");
+    return true;
   } catch (dbError) {
     console.error("❌ Критическая ошибка БД при удалении участника:", dbError);
     return ErrorCode.DATABASE_ERROR;
@@ -198,7 +219,7 @@ export async function updateProjectMemberRoleAction(
   role: ProjectRole,
   userId: string,
   projectId: string,
-): Promise<void | string> {
+): Promise<void | string | true> {
   if (!userId || !projectId || !role) {
     return ErrorCode.UPDATE_PROJECT_ERROR;
   }
@@ -235,8 +256,50 @@ export async function updateProjectMemberRoleAction(
     });
 
     revalidatePath("/");
+    return true;
   } catch (dbError) {
     console.error("❌ Критическая ошибка БД при обновлении роли:", dbError);
     return ErrorCode.DATABASE_ERROR;
+  }
+}
+
+export async function updateProjectNameAction(
+  title: string,
+  projectId: string,
+  userId: string,
+) {
+  if (!title || !projectId || !userId) {
+    return ErrorCode.UPDATE_PROJECT_ERROR;
+  }
+
+  try {
+    const member = await db.projectMember.findFirst({
+      where: {
+        projectId: projectId,
+        userId: userId,
+        role: {
+          in: ["OWNER", "ADMIN"],
+        },
+      },
+    });
+
+    if (!member) {
+      return ErrorCode.UPDATE_PROJECT_ERROR;
+    }
+
+    await db.project.update({
+      where: {
+        id: projectId,
+      },
+      data: {
+        title: title,
+      },
+    });
+
+    revalidatePath("/");
+    return true;
+  } catch (error) {
+    console.error("❌ Ошибка при изменении названия проекта:", error);
+    return ErrorCode.UPDATE_PROJECT_ERROR;
   }
 }

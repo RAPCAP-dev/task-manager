@@ -1,4 +1,3 @@
-import { db } from "./db";
 import { Form, Auth, Header } from "./ui";
 import { makeAuth } from "./auth";
 
@@ -12,6 +11,8 @@ import {
   getProjectMembersAction,
   removeMemberFromProjectAction,
   updateProjectMemberRoleAction,
+  getProjects,
+  updateProjectNameAction,
 } from "./actions/project-actions";
 
 import {
@@ -19,6 +20,7 @@ import {
   updateTaskStatusAction,
   updateTaskPriorityAction,
   updateAssignedTaskAction,
+  updateDescriptionTaskAction,
 } from "@/app/actions/task-actions";
 import { TaskProvider } from "./context/task";
 import { NotificationList } from "@/app/ui/notification";
@@ -31,21 +33,7 @@ export default async function Home() {
     return <Auth />;
   }
 
-  const projects = await db.project.findMany({
-    orderBy: { createdAt: "desc" },
-    include: {
-      tasks: {
-        orderBy: [{ createdAt: "desc" }, { id: "desc" }],
-      },
-    },
-    where: {
-      members: {
-        some: {
-          userId: user.id,
-        },
-      },
-    },
-  });
+  const projects = await getProjects(user);
 
   return (
     <UserProvider user={user} signOut={signOutAction}>
@@ -56,12 +44,14 @@ export default async function Home() {
         getProjectMembers={getProjectMembersAction}
         removeProjectMember={removeMemberFromProjectAction}
         updateProjectMemberRole={updateProjectMemberRoleAction}
+        updateProjectName={updateProjectNameAction}
       >
         <TaskProvider
           createTask={createTaskAction}
           updateTaskStatus={updateTaskStatusAction}
           updateTaskPriority={updateTaskPriorityAction}
           updateAssignedTask={updateAssignedTaskAction}
+          updateDescriptionTask={updateDescriptionTaskAction}
         >
           <NotificationProvider>
             <NotificationList />

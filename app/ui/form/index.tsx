@@ -10,7 +10,7 @@ import { TaskForm } from "./task-form";
 import { useNotification } from "@/app/context/notification";
 import { SUCCESS_MESSAGE } from "@/app/consts";
 
-export const Form = ({}) => {
+export const Form = () => {
   const { projects, createProject, selectedProjectId, setSelectedProjectId } =
     useProjects();
 

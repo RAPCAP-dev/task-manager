@@ -16,7 +16,7 @@ export const Header = () => {
         </p>
       </div>
 
-      <div className="max-w-xl mx-auto flex items-center justify-between bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow-xl backdrop-blur-md">
+      <div className="max-w-xl mx-auto flex items-center justify-between bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow-xl">
         <div className="flex items-center gap-3.5">
           <div className="relative group mr-1">
             <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-emerald-500 rounded-full blur opacity-30 group-hover:opacity-50 transition duration-300"></div>

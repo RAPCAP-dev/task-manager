@@ -2,6 +2,7 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { Project } from "@/app/types";
 import { AddUserForm } from "./add-user-form";
 import { ManageProjectMembersForm } from "./manage-project-members";
+import { RenameProjectForm } from "./rename-project-form";
 
 export const ProjectList = ({
   projects,
@@ -15,6 +16,7 @@ export const ProjectList = ({
   const [isOpenSettings, setIsOpenSettings] = useState(false);
   const [isOpenAddUserForm, setIsOpenAddUserForm] = useState(false);
   const [isOpenRemoveUserForm, setIsOpenRemoveUserForm] = useState(false);
+  const [isOpenRenameProject, setIsOpenRenameProject] = useState(false);
 
   const handleAddUser = () => {
     setIsOpenSettings(false);
@@ -24,6 +26,11 @@ export const ProjectList = ({
   const handleRemoveUser = () => {
     setIsOpenSettings(false);
     setIsOpenRemoveUserForm(true);
+  };
+
+  const handleRenameProject = () => {
+    setIsOpenSettings(false);
+    setIsOpenRenameProject(true);
   };
 
   return (
@@ -105,6 +112,12 @@ export const ProjectList = ({
                   >
                     Управление
                   </button>
+                  <button
+                    onClick={handleRenameProject}
+                    className="w-full text-left px-4 py-2 text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition"
+                  >
+                    Сменить имя проекта
+                  </button>
                 </div>
               )}
             </div>
@@ -124,6 +137,10 @@ export const ProjectList = ({
         <ManageProjectMembersForm
           onClose={() => setIsOpenRemoveUserForm(false)}
         />
+      )}
+
+      {isOpenRenameProject && (
+        <RenameProjectForm onClose={() => setIsOpenRenameProject(false)} />
       )}
     </>
   );

@@ -6,6 +6,7 @@ import { useProjects } from "./project";
 import { useUser } from "./user";
 
 export type TaskContextType = {
+  tasks: Task[];
   createTask: (
     title: string,
     priority: Priority,
@@ -22,7 +23,10 @@ export type TaskContextType = {
     taskId: string,
     targetUserId: string | null,
   ) => Promise<void | string | true>;
-  tasks: Task[];
+  updateDescriptionTask: (
+    taskId: string,
+    description: string | null,
+  ) => Promise<void | string | true>;
 };
 
 export const TaskContext = React.createContext<TaskContextType | null>(null);
@@ -33,6 +37,7 @@ export const TaskProvider = ({
   updateTaskStatus,
   updateTaskPriority,
   updateAssignedTask,
+  updateDescriptionTask,
 }: {
   children: React.ReactNode;
   createTask: (
@@ -53,6 +58,10 @@ export const TaskProvider = ({
     taskId: string,
     userId: string | null,
   ) => Promise<void | string | true>;
+  updateDescriptionTask: (
+    taskId: string,
+    description: string | null,
+  ) => Promise<void | string | true>;
 }) => {
   const { user } = useUser();
   const { projects, selectedProjectId } = useProjects();
@@ -66,11 +75,12 @@ export const TaskProvider = ({
   return (
     <TaskContext.Provider
       value={{
+        tasks,
         createTask: createTaskCtx,
         updateTaskStatus,
         updateTaskPriority,
         updateAssignedTask,
-        tasks,
+        updateDescriptionTask,
       }}
     >
       {children}
