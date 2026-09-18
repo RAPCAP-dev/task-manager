@@ -5,13 +5,13 @@ import { ProjectMemberWithUser, Task, TaskStatus } from "@/app/types";
 import { PrioritySelector } from "../priority-selector";
 import { useProjects } from "@/app/context/project";
 import { useTask } from "@/app/context/task";
-import { ListItemTitle } from "./list-item-title";
+import { TaskItemTitle } from "./task-item-title";
 
 interface ListItemProps {
   task: Task;
 }
 
-export const ListItem = ({ task }: ListItemProps) => {
+export const TaskItem = ({ task }: ListItemProps) => {
   const [isPriorityOpen, setIsPriorityOpen] = useState(false);
   const [isAssigneeOpen, setIsAssigneeOpen] = useState(false);
 
@@ -71,7 +71,7 @@ export const ListItem = ({ task }: ListItemProps) => {
         isAnyMenuOpen ? "z-40 shadow-xl border-slate-700" : "z-10"
       }`}
     >
-      <ListItemTitle
+      <TaskItemTitle
         task={task}
         onClickStatus={() => {
           const newStatus: TaskStatus =

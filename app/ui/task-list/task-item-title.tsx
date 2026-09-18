@@ -1,6 +1,6 @@
 import { Task } from "@/prisma/generated";
 
-export const ListItemTitle = ({
+export const TaskItemTitle = ({
   task,
   onClickStatus,
 }: {

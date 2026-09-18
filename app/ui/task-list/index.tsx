@@ -1,4 +1,4 @@
-import { ListItem } from "./list-item";
+import { TaskItem } from "./task-item";
 import { useTask } from "@/app/context/task";
 
 export const TaskList = () => {
@@ -19,7 +19,7 @@ export const TaskList = () => {
             Задач пока нет. Создайте первую выше!
           </p>
         ) : (
-          tasks.map((task) => <ListItem key={task.id} task={task} />)
+          tasks.map((task) => <TaskItem key={task.id} task={task} />)
         )}
       </div>
     </div>
