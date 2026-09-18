@@ -1,16 +1,21 @@
+import { SUCCESS_MESSAGE } from "@/app/consts";
 import { useNotification } from "@/app/context/notification";
 import { useProjects } from "@/app/context/project";
 
 export const AddUserForm = ({ onClose }: { onClose: () => void }) => {
   const { addUserToProject } = useProjects();
-  const { ifErrorCode } = useNotification();
+  const { ifErrorCode, addNotification } = useNotification();
 
   const handleSubmit = async (formData: FormData) => {
     const email = formData.get("email") as string;
 
     const result = await addUserToProject(email);
 
-    if (ifErrorCode(result)) return;
+    if (result === true) {
+      addNotification(SUCCESS_MESSAGE.UPDATE_PROJECT);
+    } else {
+      ifErrorCode(result);
+    }
 
     onClose();
   };

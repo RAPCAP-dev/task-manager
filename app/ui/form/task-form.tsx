@@ -2,15 +2,24 @@ import { useTask } from "@/app/context/task";
 import { Priority } from "@/app/types";
 import { useState } from "react";
 import { PrioritySelector } from "../priority-selector";
+import { useNotification } from "@/app/context/notification";
+import { SUCCESS_MESSAGE } from "@/app/consts";
 
 export const TaskForm = ({}) => {
-  const [priority, setPriority] = useState<Priority>("MEDIUM");
+  const [priority, setPriority] = useState<Priority>(Priority.MEDIUM);
   const { createTask } = useTask();
+  const { addNotification, ifErrorCode } = useNotification();
 
-  const submit = (formData: FormData) => {
+  const submit = async (formData: FormData) => {
     const title = formData.get("taskTitle") as string;
     const priority = (formData.get("taskPriority") as Priority) || "MEDIUM";
-    createTask(title, priority);
+    const result = await createTask(title, priority);
+
+    if (result === true) {
+      addNotification(SUCCESS_MESSAGE.CREATE_TASK);
+    } else {
+      ifErrorCode(result);
+    }
   };
 
   return (

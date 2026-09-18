@@ -16,7 +16,6 @@ export async function verifyProjectAdmin(
   const session = await auth();
 
   if (!session?.user?.id) {
-    // TODO: error display
     return { success: false, error: "UNAUTHORIZED" };
   }
 
@@ -34,7 +33,6 @@ export async function verifyProjectAdmin(
   const ALLOWED_ROLES = ["OWNER", "ADMIN"];
 
   if (!memberRecord || !ALLOWED_ROLES.includes(memberRecord.role)) {
-    // TODO: error display
     return { success: false, error: "FORBIDDEN" };
   }
 
@@ -45,7 +43,9 @@ export async function createProjectAction(formData: FormData, userId: string) {
   const title = formData.get("title") as string;
   const description = (formData.get("projectDescription") as string) || "";
 
-  if (!title || !userId) return;
+  if (!title || !userId) {
+    return ErrorCode.CREATE_PROJECT_ERROR
+  }
 
   try {
     const newProject = await db.project.create({
@@ -64,8 +64,10 @@ export async function createProjectAction(formData: FormData, userId: string) {
     });
 
     revalidatePath("/");
+    return true
   } catch (error) {
     console.error("❌ Ошибка при создании проекта:", error);
+    return ErrorCode.CREATE_PROJECT_ERROR
   }
 }
 
@@ -85,6 +87,7 @@ export async function addUserToProjectAction(
 
   try {
     const user = await db.user.findUnique({ where: { email } });
+
     if (!user) {
       console.error("❌ Пользователь с таким email не найден");
       return ErrorCode.USER_NOT_FOUND;
@@ -94,8 +97,7 @@ export async function addUserToProjectAction(
       where: { userId_projectId: { userId: user.id, projectId } },
     });
     if (existingMember) {
-      // TODO: error display
-      return "USER_ALREADY_IN_PROJECT";
+      return ErrorCode.USER_ALREADY_IN_PROJECT
     }
 
     await db.projectMember.create({
@@ -108,12 +110,11 @@ export async function addUserToProjectAction(
 
     revalidatePath("/");
   } catch (dbError) {
-    // TODO: error display
     console.error(
       "❌ Критическая ошибка БД при добавлении пользователя:",
       dbError,
     );
-    return "DATABASE_ERROR";
+    return ErrorCode.DATABASE_ERROR
   }
 }
 
@@ -172,19 +173,13 @@ export async function removeMemberFromProjectAction(
     });
 
     if (!targetMember) {
-      // TODO: error display
-      return "MEMBER_NOT_FOUND";
+      return ErrorCode.UPDATE_PROJECT_ERROR;
     }
 
     if (targetMember.role === "OWNER") {
-      // TODO: error display
-      return "CANNOT_REMOVE_OWNER";
+      return ErrorCode.CANNOT_REMOVE_OWNER;
     }
 
-    if (authResult.currentUserId === userId) {
-      // TODO: error display
-      return "CANNOT_REMOVE_YOURSELF";
-    }
 
     await db.projectMember.delete({
       where: {
@@ -194,9 +189,8 @@ export async function removeMemberFromProjectAction(
 
     revalidatePath("/");
   } catch (dbError) {
-    // TODO: error display
     console.error("❌ Критическая ошибка БД при удалении участника:", dbError);
-    return "DATABASE_ERROR";
+    return ErrorCode.DATABASE_ERROR;
   }
 }
 
@@ -206,8 +200,7 @@ export async function updateProjectMemberRoleAction(
   projectId: string,
 ): Promise<void | string> {
   if (!userId || !projectId || !role) {
-    // TODO: error display
-    return "INVALID_PARAMS";
+    return ErrorCode.UPDATE_PROJECT_ERROR;
   }
 
   const authResult = await verifyProjectAdmin(projectId);
@@ -223,18 +216,15 @@ export async function updateProjectMemberRoleAction(
     });
 
     if (!targetMember) {
-      // TODO: error display
-      return "MEMBER_NOT_FOUND";
+      return ErrorCode.UPDATE_PROJECT_ERROR;
     }
 
     if (targetMember.role === "OWNER") {
-      // TODO: error display
-      return "CANNOT_MODIFY_OWNER_ROLE";
+      return ErrorCode.UPDATE_PROJECT_ERROR;
     }
 
     if (role === "OWNER") {
-      // TODO: error display
-      return "CANNOT_ASSIGN_OWNER_ROLE";
+      return ErrorCode.UPDATE_PROJECT_ERROR;
     }
 
     await db.projectMember.update({
@@ -246,8 +236,7 @@ export async function updateProjectMemberRoleAction(
 
     revalidatePath("/");
   } catch (dbError) {
-    // TODO: error display
     console.error("❌ Критическая ошибка БД при обновлении роли:", dbError);
-    return "DATABASE_ERROR";
+    return ErrorCode.DATABASE_ERROR;
   }
 }

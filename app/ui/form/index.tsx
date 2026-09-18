@@ -7,19 +7,24 @@ import { FormHeader } from "./form-header";
 import { CreatingForm } from "./creating-form";
 import { ProjectList } from "./project-list";
 import { TaskForm } from "./task-form";
+import { useNotification } from "@/app/context/notification";
+import { SUCCESS_MESSAGE } from "@/app/consts";
 
 export const Form = ({}) => {
-  const {
-    projects,
-    createProject,
-    selectedProjectId,
-    setSelectedProjectId,
-  } = useProjects();
+  const { projects, createProject, selectedProjectId, setSelectedProjectId } =
+    useProjects();
+
+  const { addNotification, ifErrorCode } = useNotification();
 
   const [isCreatingProject, setIsCreatingProject] = useState(false);
 
   const handleCreateProject = async (formData: FormData) => {
-    await createProject(formData);
+    const result = await createProject(formData);
+    if (result === true) {
+      addNotification(SUCCESS_MESSAGE.CREATE_PROJECT);
+    } else {
+      ifErrorCode(result);
+    }
     setIsCreatingProject(false);
   };
 

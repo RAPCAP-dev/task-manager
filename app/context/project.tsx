@@ -8,14 +8,14 @@ export type ProjectContextType = {
   projects: Project[];
   selectedProjectId: string;
   setSelectedProjectId: React.Dispatch<React.SetStateAction<string>>;
-  createProject: (formData: FormData) => Promise<void>;
-  addUserToProject: (email: string) => Promise<void | string>;
+  createProject: (formData: FormData) => Promise<void | string | true>;
+  addUserToProject: (email: string) => Promise<void | string | true>;
   getProjectMembers: (search?: string) => Promise<ProjectMemberWithUser[]>;
-  removeProjectMember: (userId: string) => Promise<void | string>;
+  removeProjectMember: (userId: string) => Promise<void | string | true>;
   updateProjectMemberRole: (
     role: ProjectRole,
     targetUserId: string,
-  ) => Promise<void | string>;
+  ) => Promise<void | string | true>;
 };
 
 export const ProjectContext = React.createContext<ProjectContextType | null>(
@@ -33,11 +33,14 @@ export const ProjectProvider = ({
 }: {
   children: React.ReactNode;
   projects: Project[];
-  createProject: (formData: FormData, userId: string) => Promise<void>;
+  createProject: (
+    formData: FormData,
+    userId: string,
+  ) => Promise<void | string | true>;
   addUserToProject: (
     email: string,
     projectId: string,
-  ) => Promise<void | string>;
+  ) => Promise<void | string | true>;
   getProjectMembers: (
     projectId: string,
     search?: string | undefined,
@@ -45,12 +48,12 @@ export const ProjectProvider = ({
   removeProjectMember: (
     userId: string,
     projectId: string,
-  ) => Promise<void | string>;
+  ) => Promise<void | string | true>;
   updateProjectMemberRole: (
     role: ProjectRole,
     userId: string,
     projectId: string,
-  ) => Promise<void | string>;
+  ) => Promise<void | string | true>;
 }) => {
   const { user } = useUser();
 

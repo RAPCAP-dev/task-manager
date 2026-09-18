@@ -3,6 +3,7 @@
 import { db } from "../db";
 import { revalidatePath } from "next/cache";
 import { Priority, TaskStatus } from "../types";
+import { ErrorCode } from "../consts";
 
 export async function createTaskAction(
   title: string,
@@ -24,8 +25,10 @@ export async function createTaskAction(
     });
 
     revalidatePath("/");
+    return true;
   } catch (error) {
     console.error("❌ Ошибка при создании задачи:", error);
+    return ErrorCode.CREATE_TASK_ERROR;
   }
 }
 
@@ -40,8 +43,10 @@ export async function updateTaskStatusAction(
     });
 
     revalidatePath("/");
+    return true;
   } catch (error) {
     console.error("❌ Ошибка при обновлении задачи:", error);
+    return ErrorCode.CREATE_TASK_ERROR;
   }
 }
 
@@ -56,8 +61,10 @@ export async function updateTaskPriorityAction(
     });
 
     revalidatePath("/");
+    return true;
   } catch (error) {
     console.error("❌ Ошибка при обновлении задачи:", error);
+    return ErrorCode.CREATE_TASK_ERROR;
   }
 }
 
@@ -68,13 +75,15 @@ export async function updateAssignedTaskAction(
   try {
     await db.task.update({
       where: { id: taskId },
-      data: { 
-        assigneeId: targetUserId
+      data: {
+        assigneeId: targetUserId,
       },
     });
 
     revalidatePath("/");
+    return true;
   } catch (error) {
     console.error("❌ Ошибка при обновлении задачи:", error);
+    return ErrorCode.CREATE_TASK_ERROR;
   }
 }

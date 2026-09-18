@@ -31,7 +31,7 @@ const PRIORITIES = Object.values(Priority) as PriorityType[];
 
 interface PrioritySelectorProps {
   value: PriorityType;
-  onChange: (priority: PriorityType) => void | string;
+  onChange: (newPriority: Priority) => Promise<void>;
   disabled?: boolean;
 }
 

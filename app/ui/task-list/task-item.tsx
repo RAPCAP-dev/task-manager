@@ -1,11 +1,13 @@
 "use client";
 
-import { startTransition, useState, useRef, useEffect, useMemo } from "react";
-import { ProjectMemberWithUser, Task, TaskStatus } from "@/app/types";
+import { useState, useRef, useEffect, useMemo } from "react";
+import { Priority, ProjectMemberWithUser, Task, TaskStatus } from "@/app/types";
 import { PrioritySelector } from "../priority-selector";
 import { useProjects } from "@/app/context/project";
 import { useTask } from "@/app/context/task";
 import { TaskItemTitle } from "./task-item-title";
+import { useNotification } from "@/app/context/notification";
+import { SUCCESS_MESSAGE } from "@/app/consts";
 
 interface ListItemProps {
   task: Task;
@@ -44,6 +46,8 @@ export const TaskItem = ({ task }: ListItemProps) => {
   const { updateAssignedTask, updateTaskStatus, updateTaskPriority } =
     useTask();
 
+  const { addNotification, ifErrorCode } = useNotification();
+
   const [members, setMembers] = useState<ProjectMemberWithUser[]>([]);
 
   useEffect(() => {
@@ -65,20 +69,46 @@ export const TaskItem = ({ task }: ListItemProps) => {
     }
   }, [members, task.assigneeId]);
 
+  const updateStatus = async () => {
+    const newStatus: TaskStatus = task.status === "DONE" ? "TODO" : "DONE";
+    const result = await updateTaskStatus(task.id, newStatus);
+
+    if (result === true) {
+      addNotification(SUCCESS_MESSAGE.UPDATE_TASK);
+    } else {
+      ifErrorCode(result);
+    }
+  };
+
+  const updatePriority = async (newPriority: Priority) => {
+    setIsPriorityOpen(false);
+    const result = await updateTaskPriority(task.id, newPriority);
+
+    if (result === true) {
+      addNotification(SUCCESS_MESSAGE.UPDATE_TASK);
+    } else {
+      ifErrorCode(result);
+    }
+  };
+
+  const updateAssigned = async (taskId: string, userId: string | null) => {
+    setIsAssigneeOpen(false);
+    const result = await updateAssignedTask(taskId, userId);
+
+    if (result === true) {
+      addNotification(SUCCESS_MESSAGE.UPDATE_TASK);
+    } else {
+      ifErrorCode(result);
+    }
+  };
+
   return (
     <div
       className={`flex items-center justify-between p-4 bg-slate-800/50 border border-slate-800 rounded-xl hover:border-slate-700 transition relative ${
         isAnyMenuOpen ? "z-40 shadow-xl border-slate-700" : "z-10"
       }`}
     >
-      <TaskItemTitle
-        task={task}
-        onClickStatus={() => {
-          const newStatus: TaskStatus =
-            task.status === "DONE" ? "TODO" : "DONE";
-          updateTaskStatus(task.id, newStatus);
-        }}
-      />
+      <TaskItemTitle task={task} onClickStatus={updateStatus} />
 
       <div className="flex items-center gap-3 shrink-0 ml-4 relative">
         <div className="relative" ref={assigneeRef}>
@@ -109,8 +139,7 @@ export const TaskItem = ({ task }: ListItemProps) => {
                 <button
                   key={user.id}
                   onClick={() => {
-                    updateAssignedTask(task.id, user.id);
-                    setIsAssigneeOpen(false);
+                    updateAssigned(task.id, user.id);
                   }}
                   className="w-full text-right text-[11px] px-2 py-1.5 rounded text-slate-300 hover:bg-slate-800 transition"
                 >
@@ -121,8 +150,7 @@ export const TaskItem = ({ task }: ListItemProps) => {
 
               <button
                 onClick={() => {
-                  setIsAssigneeOpen(false);
-                  updateAssignedTask(task.id, null);
+                  updateAssigned(task.id, null);
                 }}
                 className="w-full text-right text-[11px] px-2 py-1.5 rounded text-rose-400 hover:bg-rose-500/10 transition border-t border-slate-800 mt-1 pt-1"
               >
@@ -153,12 +181,7 @@ export const TaskItem = ({ task }: ListItemProps) => {
             <div className="absolute right-0 top-full mt-2 min-w-[110px] z-[999] bg-[#0f172a] border border-slate-700 p-1.5 rounded-lg shadow-2xl space-y-1 backdrop-blur-md">
               <PrioritySelector
                 value={task.priority}
-                onChange={(newPriority) => {
-                  setIsPriorityOpen(false);
-                  startTransition(async () => {
-                    await updateTaskPriority(task.id, newPriority);
-                  });
-                }}
+                onChange={updatePriority}
               />
             </div>
           )}

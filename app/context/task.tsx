@@ -6,13 +6,22 @@ import { useProjects } from "./project";
 import { useUser } from "./user";
 
 export type TaskContextType = {
-  createTask: (title: string, priority: Priority) => Promise<void>;
-  updateTaskStatus: (taskId: string, status: TaskStatus) => Promise<void>;
-  updateTaskPriority: (taskId: string, newPriority: Priority) => Promise<void>;
+  createTask: (
+    title: string,
+    priority: Priority,
+  ) => Promise<void | string | true>;
+  updateTaskStatus: (
+    taskId: string,
+    status: TaskStatus,
+  ) => Promise<void | string | true>;
+  updateTaskPriority: (
+    taskId: string,
+    newPriority: Priority,
+  ) => Promise<void | string | true>;
   updateAssignedTask: (
     taskId: string,
     targetUserId: string | null,
-  ) => Promise<void>;
+  ) => Promise<void | string | true>;
   tasks: Task[];
 };
 
@@ -31,10 +40,19 @@ export const TaskProvider = ({
     priority: Priority,
     projectId: string,
     userId: string,
-  ) => Promise<void>;
-  updateTaskStatus: (taskId: string, status: TaskStatus) => Promise<void>;
-  updateTaskPriority: (taskId: string, newPriority: Priority) => Promise<void>;
-  updateAssignedTask: (taskId: string, userId: string | null) => Promise<void>;
+  ) => Promise<void | string | true>;
+  updateTaskStatus: (
+    taskId: string,
+    status: TaskStatus,
+  ) => Promise<void | string | true>;
+  updateTaskPriority: (
+    taskId: string,
+    newPriority: Priority,
+  ) => Promise<void | string | true>;
+  updateAssignedTask: (
+    taskId: string,
+    userId: string | null,
+  ) => Promise<void | string | true>;
 }) => {
   const { user } = useUser();
   const { projects, selectedProjectId } = useProjects();
