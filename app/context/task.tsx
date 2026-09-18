@@ -9,6 +9,10 @@ export type TaskContextType = {
   createTask: (title: string, priority: Priority) => Promise<void>;
   updateTaskStatus: (taskId: string, status: TaskStatus) => Promise<void>;
   updateTaskPriority: (taskId: string, newPriority: Priority) => Promise<void>;
+  updateAssignedTask: (
+    taskId: string,
+    targetUserId: string | null,
+  ) => Promise<void>;
   tasks: Task[];
 };
 
@@ -19,6 +23,7 @@ export const TaskProvider = ({
   createTask,
   updateTaskStatus,
   updateTaskPriority,
+  updateAssignedTask,
 }: {
   children: React.ReactNode;
   createTask: (
@@ -29,6 +34,7 @@ export const TaskProvider = ({
   ) => Promise<void>;
   updateTaskStatus: (taskId: string, status: TaskStatus) => Promise<void>;
   updateTaskPriority: (taskId: string, newPriority: Priority) => Promise<void>;
+  updateAssignedTask: (taskId: string, userId: string | null) => Promise<void>;
 }) => {
   const { user } = useUser();
   const { projects, selectedProjectId } = useProjects();
@@ -45,6 +51,7 @@ export const TaskProvider = ({
         createTask: createTaskCtx,
         updateTaskStatus,
         updateTaskPriority,
+        updateAssignedTask,
         tasks,
       }}
     >

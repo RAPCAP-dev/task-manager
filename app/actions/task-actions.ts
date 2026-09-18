@@ -60,3 +60,21 @@ export async function updateTaskPriorityAction(
     console.error("❌ Ошибка при обновлении задачи:", error);
   }
 }
+
+export async function updateAssignedTaskAction(
+  taskId: string,
+  targetUserId: string | null,
+) {
+  try {
+    await db.task.update({
+      where: { id: taskId },
+      data: { 
+        assigneeId: targetUserId
+      },
+    });
+
+    revalidatePath("/");
+  } catch (error) {
+    console.error("❌ Ошибка при обновлении задачи:", error);
+  }
+}

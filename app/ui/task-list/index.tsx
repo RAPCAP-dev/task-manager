@@ -2,7 +2,7 @@ import { ListItem } from "./list-item";
 import { useTask } from "@/app/context/task";
 
 export const TaskList = () => {
-  const { tasks, updateTaskStatus, updateTaskPriority } = useTask();
+  const { tasks } = useTask();
 
   return (
     <div className="space-y-4">
@@ -19,14 +19,7 @@ export const TaskList = () => {
             Задач пока нет. Создайте первую выше!
           </p>
         ) : (
-          tasks.map((task) => (
-            <ListItem
-              key={task.id}
-              task={task}
-              updateTaskStatus={updateTaskStatus}
-              updateTaskPriority={updateTaskPriority}
-            />
-          ))
+          tasks.map((task) => <ListItem key={task.id} task={task} />)
         )}
       </div>
     </div>
