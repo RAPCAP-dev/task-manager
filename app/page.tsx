@@ -21,6 +21,7 @@ import {
   updateTaskPriorityAction,
   updateAssignedTaskAction,
   updateDescriptionTaskAction,
+  updateTitleTaskAction,
 } from "@/app/actions/task-actions";
 import { TaskProvider } from "./context/task";
 import { NotificationList } from "@/app/ui/notification";
@@ -52,6 +53,7 @@ export default async function Home() {
           updateTaskPriority={updateTaskPriorityAction}
           updateAssignedTask={updateAssignedTaskAction}
           updateDescriptionTask={updateDescriptionTaskAction}
+          updateTitleTask={updateTitleTaskAction}
         >
           <NotificationProvider>
             <NotificationList />

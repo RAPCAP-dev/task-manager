@@ -27,6 +27,10 @@ export type TaskContextType = {
     taskId: string,
     description: string | null,
   ) => Promise<void | string | true>;
+  updateTitleTask: (
+    taskId: string,
+    title: string,
+  ) => Promise<void | string | true>;
 };
 
 export const TaskContext = React.createContext<TaskContextType | null>(null);
@@ -38,6 +42,7 @@ export const TaskProvider = ({
   updateTaskPriority,
   updateAssignedTask,
   updateDescriptionTask,
+  updateTitleTask,
 }: {
   children: React.ReactNode;
   createTask: (
@@ -62,6 +67,10 @@ export const TaskProvider = ({
     taskId: string,
     description: string | null,
   ) => Promise<void | string | true>;
+  updateTitleTask: (
+    taskId: string,
+    title: string,
+  ) => Promise<void | string | true>;
 }) => {
   const { user } = useUser();
   const { projects, selectedProjectId } = useProjects();
@@ -81,6 +90,7 @@ export const TaskProvider = ({
         updateTaskPriority,
         updateAssignedTask,
         updateDescriptionTask,
+        updateTitleTask,
       }}
     >
       {children}

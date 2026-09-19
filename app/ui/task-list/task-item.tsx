@@ -11,6 +11,7 @@ import { SUCCESS_MESSAGE } from "@/app/consts";
 import { TaskDescriptionEditor } from "./task-description-editor";
 import { TaskAssigneeSelector } from "./task-assignee-selector";
 import { TaskPrioritySelectorWrapper } from "./task-priority-selector-wrapper";
+import { TaskDescription } from "./task-description";
 
 interface ListItemProps {
   task: Task;
@@ -52,6 +53,7 @@ export const TaskItem = ({ task }: ListItemProps) => {
     updateTaskStatus,
     updateTaskPriority,
     updateDescriptionTask,
+    updateTitleTask,
   } = useTask();
 
   const { addNotification, ifErrorCode } = useNotification();
@@ -100,6 +102,10 @@ export const TaskItem = ({ task }: ListItemProps) => {
     handleApiCall(() => updateDescriptionTask(task.id, text));
   };
 
+  const updateTitle = async (title: string) => {
+    handleApiCall(() => updateTitleTask(task.id, title));
+  };
+
   return (
     <div
       className={`p-4 bg-slate-800/50 border border-slate-800 rounded-xl hover:border-slate-700 transition relative ${
@@ -114,37 +120,13 @@ export const TaskItem = ({ task }: ListItemProps) => {
         />
       ) : (
         <div className="flex items-center justify-between w-full">
-          <TaskItemTitle task={task} onClickStatus={updateStatus} />
+          <TaskItemTitle
+            task={task}
+            onClickStatus={updateStatus}
+            updateTitle={updateTitle}
+          />
 
           <div className="flex items-center gap-3 shrink-0 ml-4 relative">
-            <div className="relative group">
-              <button
-                onClick={() => setIsEditingDescription(true)}
-                title={
-                  task.description
-                    ? "Редактировать описание"
-                    : "Добавить описание"
-                }
-                className={`flex items-center justify-center w-7 h-7 rounded border transition ${
-                  task.description
-                    ? "border-blue-500/30 bg-blue-500/10 text-blue-400 hover:text-blue-300 hover:border-blue-500/50"
-                    : "border-slate-700/60 bg-slate-800/40 text-slate-400 hover:text-slate-300 hover:border-slate-600"
-                }`}
-              >
-                ℹ️
-              </button>
-
-              <div className="absolute bottom-full right-0 mb-2 w-64 p-2 bg-slate-900 border border-slate-700 rounded-lg shadow-xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 text-xs text-slate-300">
-                {task.description ? (
-                  <div className="whitespace-pre-wrap break-words">
-                    {task.description}
-                  </div>
-                ) : (
-                  <span className="italic opacity-50">Нет описания</span>
-                )}
-              </div>
-            </div>
-
             <div className="relative" ref={assigneeRef}>
               <TaskAssigneeSelector
                 isOpen={isAssigneeOpen}
@@ -157,6 +139,11 @@ export const TaskItem = ({ task }: ListItemProps) => {
                 onSelect={(userId) => updateAssigned(task.id, userId)}
               />
             </div>
+
+            <TaskDescription
+              onClick={() => setIsEditingDescription(true)}
+              task={task}
+            />
 
             <div className="relative" ref={priorityRef}>
               <TaskPrioritySelectorWrapper

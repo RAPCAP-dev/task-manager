@@ -73,6 +73,19 @@ export async function updateAssignedTaskAction(
   targetUserId: string | null,
 ) {
   try {
+    const currentTask = await db.task.findUnique({
+      where: { id: taskId },
+      select: { assigneeId: true },
+    });
+
+    if (!currentTask) {
+      return ErrorCode.TASK_NOT_FOUND_ERROR;
+    }
+
+    if (currentTask.assigneeId === targetUserId) {
+      return ErrorCode.TASK_ALREADY_ASSIGNED;
+    }
+
     await db.task.update({
       where: { id: taskId },
       data: {
@@ -87,6 +100,8 @@ export async function updateAssignedTaskAction(
     return ErrorCode.CREATE_TASK_ERROR;
   }
 }
+
+
 export async function updateDescriptionTaskAction(
   taskId: string,
   description: string | null,
@@ -107,4 +122,19 @@ export async function updateDescriptionTaskAction(
   }
 }
 
+export async function updateTitleTaskAction(taskId: string, title: string) {
+  try {
+    await db.task.update({
+      where: { id: taskId },
+      data: {
+        title: title,
+      },
+    });
 
+    revalidatePath("/");
+    return true;
+  } catch (error) {
+    console.error("❌ Ошибка при обновлении задачи:", error);
+    return ErrorCode.CREATE_TASK_ERROR;
+  }
+}

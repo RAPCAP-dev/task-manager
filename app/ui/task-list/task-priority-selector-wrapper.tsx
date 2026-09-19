@@ -16,11 +16,14 @@ export const TaskPrioritySelectorWrapper = ({
   priority,
   onChangePriority,
 }: TaskPrioritySelectorWrapperProps) => {
+  const shortLabel = priority.charAt(0);
+
   return (
     <>
       <span
         onClick={onToggle}
-        className={`text-xs px-2 py-0.5 rounded font-semibold uppercase tracking-wider cursor-pointer block text-center min-w-[75px] transition select-none ${
+        title={priority}
+        className={`text-[11px] w-5 h-5 flex items-center justify-center rounded font-bold cursor-pointer transition select-none ${
           priority === "HIGH"
             ? "bg-rose-500/10 text-rose-400 border border-rose-500/20 hover:bg-rose-500/20"
             : priority === "MEDIUM"
@@ -28,11 +31,11 @@ export const TaskPrioritySelectorWrapper = ({
               : "bg-slate-700/50 text-slate-400 border border-slate-700 hover:bg-slate-700/80"
         }`}
       >
-        {priority}
+        {shortLabel}
       </span>
 
       {isOpen && (
-        <div className="absolute right-0 top-full mt-2 min-w-[110px] z-[999] bg-[#0f172a] border border-slate-700 p-1.5 rounded-lg shadow-2xl space-y-1 backdrop-blur-md">
+        <div className="absolute right-0 top-full mt-1 min-w-[100px] z-[999] bg-[#0f172a] border border-slate-700 p-1 rounded-lg shadow-2xl space-y-1 backdrop-blur-md">
           <PrioritySelector value={priority} onChange={onChangePriority} />
         </div>
       )}
