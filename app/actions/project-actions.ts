@@ -3,23 +3,50 @@
 import { ErrorCode } from "../consts";
 import { db } from "../db";
 import { revalidatePath } from "next/cache";
-import { ProjectRole, User } from "../types";
+import { GetProjectsParams, ProjectRole, User } from "../types";
 import { auth } from "../auth";
 
-export async function getProjects(user: User) {
+
+export async function getProjectsAction(user: User, params?: GetProjectsParams) {
+  const sort = params?.sort || "newest";
+  const filter = params?.filter || "all";
+
+  // TODO: fix types
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const taskWhereClause: any = {};
+  
+  if (filter === "my") {
+    taskWhereClause.assigneeId = user.id;
+  }
+  
+  // TODO: fix types
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let taskOrderBy: any = [{ createdAt: "desc" }, { id: "desc" }];
+
+  if (sort === "oldest") {
+    taskOrderBy = [{ createdAt: "asc" }, { id: "asc" }];
+  } else if (sort === "priority-desc") {
+    taskOrderBy = [{ priority: "desc" }, { createdAt: "desc" }];
+  } else if (sort === "priority-asc") {
+    taskOrderBy = [{ priority: "asc" }, { createdAt: "desc" }];
+  } else if (sort === "none") {
+    taskOrderBy = [{ id: "desc" }];
+  }
+
   try {
     return await db.project.findMany({
       orderBy: { createdAt: "desc" },
-      include: {
-        tasks: {
-          orderBy: [{ createdAt: "desc" }, { id: "desc" }],
-        },
-      },
       where: {
         members: {
           some: {
             userId: user.id,
           },
+        },
+      },
+      include: {
+        tasks: {
+          where: taskWhereClause,
+          orderBy: taskOrderBy,
         },
       },
     });

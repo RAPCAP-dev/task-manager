@@ -1,8 +1,15 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
-import { Project, ProjectMemberWithUser, ProjectRole } from "../types";
+import React, { useEffect, useState } from "react";
+import {
+  GetProjectsParams,
+  Project,
+  ProjectMemberWithUser,
+  ProjectRole,
+  User,
+} from "../types";
 import { useUser } from "./user";
+import { useSettings } from "./settings";
 
 export type ProjectContextType = {
   projects: Project[];
@@ -25,7 +32,8 @@ export const ProjectContext = React.createContext<ProjectContextType | null>(
 
 export const ProjectProvider = ({
   children,
-  projects,
+  // projects,
+  getProjects,
   createProject,
   addUserToProject,
   getProjectMembers,
@@ -34,7 +42,8 @@ export const ProjectProvider = ({
   updateProjectName,
 }: {
   children: React.ReactNode;
-  projects: Project[];
+  // projects: Project[];
+  getProjects: (user: User, params?: GetProjectsParams) => Promise<Project[]>;
   createProject: (
     formData: FormData,
     userId: string,
@@ -63,10 +72,10 @@ export const ProjectProvider = ({
   ) => Promise<void | string | true>;
 }) => {
   const { user } = useUser();
+  const { params } = useSettings();
 
-  const [selectedProjectId, setSelectedProjectId] = useState<string>(
-    projects[0]?.id || "",
-  );
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [selectedProjectId, setSelectedProjectId] = useState<string>("");
 
   const createProjectCtx = (formData: FormData) =>
     createProject(formData, user.id);
@@ -87,6 +96,21 @@ export const ProjectProvider = ({
 
   const updateProjectNameCtx = (title: string) =>
     updateProjectName(title, selectedProjectId, user.id);
+
+  useEffect(() => {
+    const syncProjects = async () => {
+      const projects = await getProjects(user, params);
+      setProjects(projects);
+
+      if (!selectedProjectId && projects.length) {
+        setSelectedProjectId(projects[0]?.id);
+      }
+    };
+
+    syncProjects();
+    // exclude selectedProjectId
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [getProjects, params, user]);
 
   return (
     <ProjectContext.Provider

@@ -11,8 +11,8 @@ import {
   getProjectMembersAction,
   removeMemberFromProjectAction,
   updateProjectMemberRoleAction,
-  getProjects,
   updateProjectNameAction,
+  getProjectsAction,
 } from "./actions/project-actions";
 
 import {
@@ -26,6 +26,7 @@ import {
 import { TaskProvider } from "./context/task";
 import { NotificationList } from "@/app/ui/notification";
 import { NotificationProvider } from "./context/notification";
+import { SettingsProvider } from "./context/settings";
 
 export default async function Home() {
   const user = await makeAuth();
@@ -34,34 +35,36 @@ export default async function Home() {
     return <Auth />;
   }
 
-  const projects = await getProjects(user);
+  // const projects = await getProjects(user);
 
   return (
-    <UserProvider user={user} signOut={signOutAction}>
-      <ProjectProvider
-        projects={projects}
-        addUserToProject={addUserToProjectAction}
-        createProject={createProjectAction}
-        getProjectMembers={getProjectMembersAction}
-        removeProjectMember={removeMemberFromProjectAction}
-        updateProjectMemberRole={updateProjectMemberRoleAction}
-        updateProjectName={updateProjectNameAction}
-      >
-        <TaskProvider
-          createTask={createTaskAction}
-          updateTaskStatus={updateTaskStatusAction}
-          updateTaskPriority={updateTaskPriorityAction}
-          updateAssignedTask={updateAssignedTaskAction}
-          updateDescriptionTask={updateDescriptionTaskAction}
-          updateTitleTask={updateTitleTaskAction}
+    <SettingsProvider>
+      <UserProvider user={user} signOut={signOutAction}>
+        <ProjectProvider
+          getProjects={getProjectsAction}
+          addUserToProject={addUserToProjectAction}
+          createProject={createProjectAction}
+          getProjectMembers={getProjectMembersAction}
+          removeProjectMember={removeMemberFromProjectAction}
+          updateProjectMemberRole={updateProjectMemberRoleAction}
+          updateProjectName={updateProjectNameAction}
         >
-          <NotificationProvider>
-            <NotificationList />
-            <Header />
-            <Form />
-          </NotificationProvider>
-        </TaskProvider>
-      </ProjectProvider>
-    </UserProvider>
+          <TaskProvider
+            createTask={createTaskAction}
+            updateTaskStatus={updateTaskStatusAction}
+            updateTaskPriority={updateTaskPriorityAction}
+            updateAssignedTask={updateAssignedTaskAction}
+            updateDescriptionTask={updateDescriptionTaskAction}
+            updateTitleTask={updateTitleTaskAction}
+          >
+            <NotificationProvider>
+              <NotificationList />
+              <Header />
+              <Form />
+            </NotificationProvider>
+          </TaskProvider>
+        </ProjectProvider>
+      </UserProvider>
+    </SettingsProvider>
   );
 }
